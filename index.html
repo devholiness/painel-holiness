@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>Painel Digital — Igreja Evangélica Holiness de Pompeia</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   VARIÁVEIS & RESET
+══════════════════════════════════════════════ */
+:root {
+  --gold:        #C8A84B;
+  --gold-light:  #E2CA7E;
+  --gold-dark:   #8B6B1A;
+  --gold-glow:   rgba(200,168,75,0.18);
+  --deep:        #090D14;
+  --dark:        #0F1520;
+  --card:        #141D2B;
+  --card2:       #192032;
+  --border:      rgba(200,168,75,0.18);
+  --text:        #EDE9E0;
+  --muted:       #7A7468;
+  --blue:        #4A90D9;
+  --green:       #52B870;
+  --red:         #D95A5A;
+  --purple:      #8B6FD4;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 1080px;
+  background: var(--deep);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden; /* slides control scroll */
+}
+
+/* ══════════════════════════════════════════════
+   SLIDES CONTAINER
+══════════════════════════════════════════════ */
+#slides-wrap {
+  width: 1080px;
+  height: 1920px;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 1080px;
+  height: 1920px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ══ Indicadores de slide ══ */
+#slide-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(200,168,75,0.25);
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.on {
+  background: var(--gold);
+  transform: scale(1.4);
+}
+
+/* ══════════════════════════════════════════════
+   COMPONENTES COMUNS
+══════════════════════════════════════════════ */
+
+/* BG atmosférico reutilizável */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.slide-bg::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 800px 500px at 50% 0%,   rgba(200,168,75,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 500px 700px at 85% 55%,  rgba(74,144,217,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 400px 400px at 15% 80%,  rgba(200,168,75,0.07) 0%, transparent 60%);
+}
+
+/* Conteúdo acima do bg */
+.slide > * { position: relative; z-index: 1; }
+.slide > .slide-bg { z-index: 0; }
+
+/* ── CABEÇALHO PADRÃO ── */
+.site-header {
+  padding: 52px 64px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.site-header::after {
+  content:'';
+  position:absolute; bottom:-1px; left:50%;
+  transform:translateX(-50%);
+  width:100px; height:2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.header-cross {
+  font-size:28px; color:var(--gold);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { text-shadow: 0 0 8px rgba(200,168,75,0.3); }
+  to   { text-shadow: 0 0 28px rgba(200,168,75,0.8), 0 0 56px rgba(200,168,75,0.3); }
+}
+.header-name {
+  font-family:'Cormorant Garamond', serif;
+  font-size: 44px; font-weight:700;
+  text-align:center; line-height:1.1;
+  color: var(--text);
+}
+.header-name em {
+  display:block;
+  font-size:26px; font-weight:400; font-style:normal;
+  color:var(--gold); letter-spacing:5px;
+  text-transform:uppercase; margin-bottom:4px;
+}
+.header-sub {
+  font-size:13px; font-weight:300;
+  color:var(--muted); letter-spacing:4px;
+  text-transform:uppercase;
+}
+.gold-line {
+  width:56px; height:2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 2px auto;
+}
+
+/* ── CLOCK BAR ── */
+.clock-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 22px 64px;
+  background: rgba(200,168,75,0.05);
+  border-bottom: 1px solid var(--border);
+  flex-shrink:0;
+}
+.clock-time {
+  font-family:'Cormorant Garamond',serif;
+  font-size:72px; font-weight:700;
+  color:var(--gold); letter-spacing:3px;
+  font-variant-numeric: tabular-nums;
+}
+.clock-right { text-align:right; }
+.clock-right .day  { font-size:20px; font-weight:800; color:var(--text); letter-spacing:3px; text-transform:uppercase; }
+.clock-right .date { font-size:15px; color:var(--muted); margin-top:4px; }
+
+/* ── LABEL DE SEÇÃO ── */
+.sec-label {
+  display:flex; align-items:center; gap:16px;
+  padding: 0 64px; margin-top:40px; margin-bottom:18px;
+}
+.sec-label span {
+  font-size:11px; font-weight:800;
+  letter-spacing:4px; text-transform:uppercase;
+  color:var(--gold); white-space:nowrap;
+}
+.sec-label::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, rgba(200,168,75,0.4), transparent);
+}
+
+/* ── TICKER ── */
+.ticker-bar {
+  position:absolute; bottom:0; left:0; right:0;
+  height:58px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  display:flex; align-items:center; overflow:hidden;
+  z-index:50; flex-shrink:0;
+}
+.ticker-pill {
+  flex-shrink:0; padding:0 20px; height:100%;
+  background:rgba(0,0,0,0.28);
+  display:flex; align-items:center;
+  font-size:12px; font-weight:800;
+  letter-spacing:3px; color:var(--deep);
+  text-transform:uppercase;
+}
+.ticker-track { flex:1; overflow:hidden; }
+.ticker-inner {
+  display:inline-flex; white-space:nowrap;
+  animation: scroll-ticker 32s linear infinite;
+}
+@keyframes scroll-ticker {
+  from { transform:translateX(0); }
+  to   { transform:translateX(-50%); }
+}
+.ticker-inner span {
+  font-size:15px; font-weight:700;
+  color:var(--deep); padding:0 48px;
+}
+.ticker-inner span::before { content:'✦'; margin-right:14px; opacity:.5; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 1 — AGENDA + VERSÍCULO
+══════════════════════════════════════════════ */
+
+/* Versículo */
+.verse-box {
+  margin: 32px 64px 0;
+  padding:32px 40px;
+  background: linear-gradient(135deg, rgba(200,168,75,0.11), rgba(200,168,75,0.03));
+  border:1px solid rgba(200,168,75,0.22);
+  border-radius:4px;
+  position:relative; overflow:hidden;
+}
+.verse-box::before {
+  content:'\201C';
+  position:absolute; top:-24px; left:20px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:180px; color:rgba(200,168,75,0.08);
+  line-height:1; pointer-events:none;
+}
+.verse-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:27px; font-style:italic;
+  line-height:1.65; color:var(--text);
+  position:relative; z-index:1;
+}
+.verse-ref {
+  margin-top:14px;
+  font-size:13px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold);
+}
+
+/* Agenda cards */
+.agenda-list { padding:0 64px; display:flex; flex-direction:column; gap:14px; }
+
+.a-card {
+  display:flex; background:var(--card);
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:4px; overflow:hidden;
+  animation: slideIn .5s ease both;
+}
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(-18px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+.a-card:nth-child(1){animation-delay:.08s}
+.a-card:nth-child(2){animation-delay:.16s}
+.a-card:nth-child(3){animation-delay:.24s}
+.a-card:nth-child(4){animation-delay:.32s}
+.a-card:nth-child(5){animation-delay:.40s}
+
+.a-stripe { width:6px; flex-shrink:0; background:var(--gold); }
+.a-stripe.b { background:var(--blue); }
+.a-stripe.g { background:var(--green); }
+.a-stripe.r { background:var(--red); }
+.a-stripe.p { background:var(--purple); }
+
+.a-body { padding:20px 28px; flex:1; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.a-title { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:700; color:var(--text); line-height:1.2; }
+.a-sub   { font-size:14px; color:var(--muted); margin-top:4px; }
+.a-time  { text-align:right; flex-shrink:0; }
+.a-time .t  { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:700; color:var(--gold); }
+.a-time .d  { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin-top:2px; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 2 — SLIDESHOW DE FOTOS
+══════════════════════════════════════════════ */
+.photo-slide { position:relative; }
+
+.photo-stage {
+  margin: 32px 64px 0;
+  height: 680px;
+  border-radius:4px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+.photo-item {
+  position:absolute; inset:0;
+  opacity:0; transition:opacity 1.2s ease;
+}
+.photo-item.on { opacity:1; }
+.photo-item img {
+  width:100%; height:100%; object-fit:cover;
+  filter:brightness(.72);
+  animation: kb 12s ease-in-out infinite alternate;
+}
+@keyframes kb {
+  from { transform:scale(1) translate(0,0); }
+  to   { transform:scale(1.07) translate(-12px,-6px); }
+}
+.photo-caption-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:28px 32px;
+  background:linear-gradient(transparent, rgba(9,13,20,.96));
+}
+.photo-caption-overlay .p-title { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:var(--text); }
+.photo-caption-overlay .p-sub   { font-size:15px; color:var(--muted); margin-top:4px; }
+
+/* Miniaturas */
+.photo-thumbs {
+  display:flex; gap:12px;
+  padding: 16px 64px 0;
+}
+.thumb {
+  flex:1; height:100px; border-radius:3px;
+  overflow:hidden; border:2px solid transparent;
+  transition:border-color .3s;
+  cursor:pointer;
+}
+.thumb.on { border-color:var(--gold); }
+.thumb img { width:100%; height:100%; object-fit:cover; filter:brightness(.6); transition:filter .3s; }
+.thumb.on img { filter:brightness(.9); }
+
+/* Info grid abaixo das fotos */
+.photo-info-grid {
+  padding: 0 64px;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.pi-card {
+  background:var(--card2);
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:4px;
+  padding:26px 24px;
+  display:flex; flex-direction:column; gap:8px;
+  animation: fadeUp .5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.pi-card:nth-child(1){animation-delay:.1s}
+.pi-card:nth-child(2){animation-delay:.2s}
+.pi-card:nth-child(3){animation-delay:.3s}
+.pi-card:nth-child(4){animation-delay:.4s}
+
+.pi-icon  { font-size:28px; }
+.pi-tag   { display:inline-block; padding:3px 10px; border-radius:2px; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; background:rgba(200,168,75,0.14); color:var(--gold); align-self:flex-start; }
+.pi-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--text); line-height:1.2; }
+.pi-desc  { font-size:13px; color:var(--muted); line-height:1.5; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 3 — VÍDEO
+══════════════════════════════════════════════ */
+.video-stage {
+  margin: 0 64px;
+  position:relative;
+  border-radius:4px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  background:#000;
+}
+.video-stage video {
+  width:100%; display:block;
+  max-height:560px; object-fit:cover;
+}
+.video-stage iframe {
+  width:100%; height:560px; border:none; display:block;
+}
+.video-badge {
+  position:absolute; top:18px; left:18px;
+  background:rgba(200,168,75,0.9);
+  color:var(--deep); padding:6px 14px;
+  border-radius:2px; font-size:12px; font-weight:800;
+  letter-spacing:2px; text-transform:uppercase;
+}
+
+.video-info {
+  margin:24px 64px 0;
+  padding:28px 32px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+}
+.video-title { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:700; color:var(--text); }
+.video-meta  { font-size:15px; color:var(--muted); margin-top:8px; line-height:1.6; }
+
+/* Playlist abaixo */
+.video-playlist { padding:0 64px; display:flex; flex-direction:column; gap:12px; }
+.vp-item {
+  display:flex; gap:16px; align-items:center;
+  background:var(--card2);
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:4px;
+  padding:18px 22px;
+}
+.vp-num  { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--gold); width:36px; flex-shrink:0; }
+.vp-info .vp-t { font-size:18px; font-weight:700; color:var(--text); }
+.vp-info .vp-s { font-size:13px; color:var(--muted); margin-top:2px; }
+.vp-dur  { margin-left:auto; font-size:13px; color:var(--muted); }
+
+/* ══════════════════════════════════════════════
+   RODAPÉ COMUM
+══════════════════════════════════════════════ */
+.site-footer {
+  margin-top:auto;
+  padding:28px 64px 78px; /* 78 = space for ticker */
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:flex-end;
+}
+.footer-contact { display:flex; flex-direction:column; gap:6px; }
+.footer-contact span { font-size:14px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+.footer-contact span b { color:var(--text); font-weight:700; }
+.footer-brand { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold-dark); text-align:right; opacity:.5; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SLIDE DOTS ══════════ -->
+<div id="slide-dots">
+  <div class="dot on"></div>
+  <div class="dot"></div>
+  <div class="dot"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 1 — AGENDA + VERSÍCULO
+════════════════════════════════════════════ -->
+<div id="slides-wrap">
+<div class="slide active" id="slide-1">
+  <div class="slide-bg"></div>
+
+  <header class="site-header">
+    <div class="header-cross">✝</div>
+    <div class="header-name">
+      <em>Holiness</em>
+      Igreja Evangélica<br>de Pompeia
+    </div>
+    <div class="gold-line"></div>
+    <div class="header-sub">Palavra · Adoração · Comunidade</div>
+  </header>
+
+  <div class="clock-bar">
+    <div class="clock-time" id="clock1">00:00</div>
+    <div class="clock-right">
+      <div class="day"  id="day1">—</div>
+      <div class="date" id="date1">—</div>
+    </div>
+  </div>
+
+  <!-- Versículo -->
+  <div class="verse-box" style="margin-bottom:0">
+    <div class="verse-text" id="verse-text">
+      "Porque eu sei os planos que tenho para vocês — planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro."
+    </div>
+    <div class="verse-ref" id="verse-ref">Jeremias 29:11 — Versículo da Semana</div>
+  </div>
+
+  <!-- Agenda -->
+  <div class="sec-label"><span>Agenda da Semana</span></div>
+  <div class="agenda-list" id="agenda-list">
+    <!-- Populado via JS / Google Sheets -->
+    <div class="a-card">
+      <div class="a-stripe"></div>
+      <div class="a-body">
+        <div><div class="a-title">Culto de Celebração</div><div class="a-sub">Templo Principal · Pr. Responsável</div></div>
+        <div class="a-time"><div class="t">18h</div><div class="d">Domingo</div></div>
+      </div>
+    </div>
+    <div class="a-card">
+      <div class="a-stripe b"></div>
+      <div class="a-body">
+        <div><div class="a-title">Culto de Oração</div><div class="a-sub">Templo Principal</div></div>
+        <div class="a-time"><div class="t">19h30</div><div class="d">Quarta</div></div>
+      </div>
+    </div>
+    <div class="a-card">
+      <div class="a-stripe g"></div>
+      <div class="a-body">
+        <div><div class="a-title">Reunião de Jovens</div><div class="a-sub">Salão de Jovens</div></div>
+        <div class="a-time"><div class="t">20h</div><div class="d">Sexta</div></div>
+      </div>
+    </div>
+    <div class="a-card">
+      <div class="a-stripe r"></div>
+      <div class="a-body">
+        <div><div class="a-title">Escola Bíblica Dominical</div><div class="a-sub">Classes por faixa etária</div></div>
+        <div class="a-time"><div class="t">9h</div><div class="d">Domingo</div></div>
+      </div>
+    </div>
+    <div class="a-card">
+      <div class="a-stripe p"></div>
+      <div class="a-body">
+        <div><div class="a-title">Encontro de Senhoras</div><div class="a-sub">Salão Social · UAM Holiness</div></div>
+        <div class="a-time"><div class="t">14h</div><div class="d">Sábado</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-contact">
+      <span>📍 <b>Pompeia — SP</b></span>
+      <span>📱 <b>@holiness.pompeia</b> no Instagram</span>
+    </div>
+    <div class="footer-brand">Igreja Evangélica<br>Holiness de Pompeia</div>
+  </footer>
+
+  <div class="ticker-bar">
+    <div class="ticker-pill">Avisos</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker1"><!-- JS preenche --></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 2 — GALERIA DE FOTOS + AVISOS
+════════════════════════════════════════════ -->
+<div class="slide" id="slide-2">
+  <div class="slide-bg"></div>
+
+  <header class="site-header">
+    <div class="header-cross">✝</div>
+    <div class="header-name">
+      <em>Holiness</em>
+      Igreja Evangélica<br>de Pompeia
+    </div>
+    <div class="gold-line"></div>
+    <div class="header-sub">Momentos da Nossa Comunidade</div>
+  </header>
+
+  <div class="clock-bar">
+    <div class="clock-time" id="clock2">00:00</div>
+    <div class="clock-right">
+      <div class="day"  id="day2">—</div>
+      <div class="date" id="date2">—</div>
+    </div>
+  </div>
+
+  <div class="sec-label"><span>Galeria — Nossa Comunidade</span></div>
+
+  <!-- Slideshow de fotos -->
+  <div class="photo-stage" id="photoStage">
+    <!-- As fotos são carregadas aqui via JS -->
+    <div class="photo-item on" data-caption="Culto de Celebração" data-sub="Domingo · Templo Principal">
+      <img src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1080&q=80" alt="">
+      <div class="photo-caption-overlay">
+        <div class="p-title">Culto de Celebração</div>
+        <div class="p-sub">Domingo · Templo Principal</div>
+      </div>
+    </div>
+    <div class="photo-item" data-caption="Escola Bíblica" data-sub="Classes para todas as idades">
+      <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=1080&q=80" alt="">
+      <div class="photo-caption-overlay">
+        <div class="p-title">Escola Bíblica</div>
+        <div class="p-sub">Classes para todas as idades</div>
+      </div>
+    </div>
+    <div class="photo-item" data-caption="Reunião de Jovens" data-sub="Holiness Next Generation">
+      <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1080&q=80" alt="">
+      <div class="photo-caption-overlay">
+        <div class="p-title">Reunião de Jovens</div>
+        <div class="p-sub">Holiness Next Generation</div>
+      </div>
+    </div>
+    <div class="photo-item" data-caption="Missões &amp; Evangelismo" data-sub="Alcançando Pompeia para Cristo">
+      <img src="https://images.unsplash.com/photo-1591522810850-58128c5fb089?w=1080&q=80" alt="">
+      <div class="photo-caption-overlay">
+        <div class="p-title">Missões &amp; Evangelismo</div>
+        <div class="p-sub">Alcançando Pompeia para Cristo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Miniaturas -->
+  <div class="photo-thumbs" id="photoThumbs">
+    <div class="thumb on"><img src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=300&q=60" alt=""></div>
+    <div class="thumb"><img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=300&q=60" alt=""></div>
+    <div class="thumb"><img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=300&q=60" alt=""></div>
+    <div class="thumb"><img src="https://images.unsplash.com/photo-1591522810850-58128c5fb089?w=300&q=60" alt=""></div>
+  </div>
+
+  <!-- Avisos -->
+  <div class="sec-label" style="margin-top:30px"><span>Avisos &amp; Ministérios</span></div>
+  <div class="photo-info-grid" id="info-grid">
+    <div class="pi-card">
+      <div class="pi-icon">🍞</div>
+      <div class="pi-tag">Santa Ceia</div>
+      <div class="pi-title">1º Domingo do Mês</div>
+      <div class="pi-desc">Próxima celebração no culto das 18h. Venha se preparar.</div>
+    </div>
+    <div class="pi-card">
+      <div class="pi-icon">📖</div>
+      <div class="pi-tag">Novo</div>
+      <div class="pi-title">Estudo Bíblico</div>
+      <div class="pi-desc">Quarta às 19h30. Grupos divididos por faixa etária.</div>
+    </div>
+    <div class="pi-card">
+      <div class="pi-icon">🎶</div>
+      <div class="pi-tag">Ministério</div>
+      <div class="pi-title">Coral Holiness</div>
+      <div class="pi-desc">Ensaios aos sábados às 16h. Participe do ministério de louvor!</div>
+    </div>
+    <div class="pi-card">
+      <div class="pi-icon">🤝</div>
+      <div class="pi-tag">Social</div>
+      <div class="pi-title">Ação Comunitária</div>
+      <div class="pi-desc">Doações de alimentos todo mês. Contribua na secretaria.</div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-contact">
+      <span>📍 <b>Pompeia — SP</b></span>
+      <span>📱 <b>@holiness.pompeia</b></span>
+    </div>
+    <div class="footer-brand">Igreja Evangélica<br>Holiness de Pompeia</div>
+  </footer>
+
+  <div class="ticker-bar">
+    <div class="ticker-pill">Avisos</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE 3 — VÍDEO / MENSAGEM
+════════════════════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="slide-bg"></div>
+
+  <header class="site-header">
+    <div class="header-cross">✝</div>
+    <div class="header-name">
+      <em>Holiness</em>
+      Igreja Evangélica<br>de Pompeia
+    </div>
+    <div class="gold-line"></div>
+    <div class="header-sub">Mensagem da Semana</div>
+  </header>
+
+  <div class="clock-bar">
+    <div class="clock-time" id="clock3">00:00</div>
+    <div class="clock-right">
+      <div class="day"  id="day3">—</div>
+      <div class="date" id="date3">—</div>
+    </div>
+  </div>
+
+  <div class="sec-label"><span>Mensagem em Destaque</span></div>
+
+  <!-- Vídeo incorporado (YouTube embed ou arquivo local) -->
+  <div class="video-stage">
+    <div class="video-badge">▶ Ao Vivo / Últimas</div>
+    <!--
+      PARA USAR YOUTUBE: substitua o src abaixo pelo embed do seu vídeo
+      Ex: https://www.youtube.com/embed/SEU_VIDEO_ID?autoplay=1&mute=1&loop=1
+      PARA ARQUIVO LOCAL: use <video autoplay muted loop>
+    -->
+    <iframe
+      id="videoFrame"
+      src="https://www.youtube.com/embed/videoseries?list=PLbpi6ZahtOH6Ar_3GPy3workJB3xALXI&autoplay=1&mute=1&loop=1"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- Informação do vídeo -->
+  <div class="video-info">
+    <div class="video-title" id="video-title">Título da Mensagem da Semana</div>
+    <div class="video-meta" id="video-meta">Pregador(a) · Data do culto · Série: Nome da Série</div>
+  </div>
+
+  <!-- Playlist / próximas mensagens -->
+  <div class="sec-label" style="margin-top:28px"><span>Próximas Mensagens</span></div>
+  <div class="video-playlist" id="playlist">
+    <div class="vp-item">
+      <div class="vp-num">01</div>
+      <div class="vp-info">
+        <div class="vp-t">Mensagem — Domingo Manhã</div>
+        <div class="vp-s">EBD · Culto das 9h</div>
+      </div>
+      <div class="vp-dur">Este domingo</div>
+    </div>
+    <div class="vp-item">
+      <div class="vp-num">02</div>
+      <div class="vp-info">
+        <div class="vp-t">Culto de Oração e Louvor</div>
+        <div class="vp-s">Quarta · 19h30</div>
+      </div>
+      <div class="vp-dur">Quarta-feira</div>
+    </div>
+    <div class="vp-item">
+      <div class="vp-num">03</div>
+      <div class="vp-info">
+        <div class="vp-t">Culto de Celebração</div>
+        <div class="vp-s">Templo Principal · 18h</div>
+      </div>
+      <div class="vp-dur">Domingo à noite</div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-contact">
+      <span>📍 <b>Pompeia — SP</b></span>
+      <span>📱 <b>@holiness.pompeia</b></span>
+    </div>
+    <div class="footer-brand">Igreja Evangélica<br>Holiness de Pompeia</div>
+  </footer>
+
+  <div class="ticker-bar">
+    <div class="ticker-pill">Avisos</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker3"></div>
+    </div>
+  </div>
+</div>
+</div><!-- /slides-wrap -->
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT — Relógio · Slides · Fotos
+     · Google Sheets (configurável)
+══════════════════════════════════════════ -->
+<script>
+/* ═══════════════════════════════════════════
+   ★  CONFIGURAÇÃO — edite aqui pelo Sheets
+   ═══════════════════════════════════════════
+   Para ligar ao Google Sheets:
+   1. Crie uma planilha pública com as abas:
+      "config", "agenda", "avisos", "fotos", "videos"
+   2. Publique como CSV (Arquivo > Publicar na Web > CSV)
+   3. Cole o ID da planilha abaixo
+   ═══════════════════════════════════════════ */
+
+// IDs das planilhas no Google Drive
+const SHEET_CONFIG  = '1xjpeXlLGaz_ADPCmZyc3UUJTQTBcxq-G5cENAjeVjI0';
+const SHEET_AGENDA  = '15xLUwYE2tobA_5Ez9lKTmJSjs9T-62uYJ5AN2qbCdMQ';
+const SHEET_AVISOS  = '11X-yOgiarJMm8T7SHABwlAW5qPUQK-oY_pWPdFqzNdM';
+const SHEET_FOTOS   = '1p3Q0nsBMBsPQKDI4Fy5VSvegTxJhtYf1H7_Bsk6DtIw';
+const SHEETS_ID = SHEET_CONFIG; // compatibilidade // ← Cole aqui o ID da sua planilha Google
+// Exemplo: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms'
+
+// Dados padrão (usados quando Sheets não está configurado)
+const DATA = {
+  verse: {
+    text: "Porque eu sei os planos que tenho para vocês — planos de fazê-los prosperar e não de causar dano, planos de dar a vocês esperança e um futuro.",
+    ref: "Jeremias 29:11 — Versículo da Semana"
+  },
+  ticker: [
+    "Bem-vindo(a) à Igreja Evangélica Holiness de Pompeia!",
+    "Culto de Celebração — Domingos às 18h no Templo Principal",
+    "Culto de Oração — Quartas às 19h30",
+    "Reunião de Jovens — Sextas às 20h",
+    "Siga-nos no Instagram: @holiness.pompeia",
+    "Que a paz de Deus guarde o seu coração e a sua mente — Fp 4:7"
+  ],
+  videoTitle: "Mensagem da Semana — Holiness Pompeia",
+  videoMeta:  "Pr. Responsável · Templo Principal · Série em andamento"
+};
+
+/* ═══════════════════════════════════════════
+   RELÓGIO
+═══════════════════════════════════════════ */
+const DIAS  = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+function updateClocks() {
+  const n = new Date();
+  const hh = String(n.getHours()).padStart(2,'0');
+  const mm = String(n.getMinutes()).padStart(2,'0');
+  const timeStr = `${hh}:${mm}`;
+  const dayStr  = DIAS[n.getDay()];
+  const dateStr = `${n.getDate()} de ${MESES[n.getMonth()]} de ${n.getFullYear()}`;
+  [1,2,3].forEach(i => {
+    document.getElementById(`clock${i}`).textContent = timeStr;
+    document.getElementById(`day${i}`).textContent   = dayStr;
+    document.getElementById(`date${i}`).textContent  = dateStr;
+  });
+}
+updateClocks();
+setInterval(updateClocks, 1000);
+
+/* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+function buildTicker(items) {
+  const doubled = [...items, ...items];
+  return doubled.map(t => `<span>${t}</span>`).join('');
+}
+function initTickers() {
+  const html = buildTicker(DATA.ticker);
+  [1,2,3].forEach(i => {
+    const el = document.getElementById(`ticker${i}`);
+    if (el) el.innerHTML = html;
+  });
+}
+initTickers();
+
+/* ═══════════════════════════════════════════
+   SLIDES AUTOMÁTICOS (20s por slide)
+═══════════════════════════════════════════ */
+const SLIDES       = document.querySelectorAll('.slide');
+const DOTS         = document.querySelectorAll('.dot');
+const SLIDE_DELAY  = 20000; // ms — altere para mudar o tempo
+let currentSlide   = 0;
+
+function goToSlide(idx) {
+  SLIDES[currentSlide].classList.remove('active');
+  DOTS[currentSlide].classList.remove('on');
+  currentSlide = (idx + SLIDES.length) % SLIDES.length;
+  SLIDES[currentSlide].classList.add('active');
+  DOTS[currentSlide].classList.add('on');
+}
+
+let slideTimer = setInterval(() => goToSlide(currentSlide + 1), SLIDE_DELAY);
+
+// Clique nos dots para navegar manualmente
+DOTS.forEach((d, i) => {
+  d.addEventListener('click', () => {
+    clearInterval(slideTimer);
+    goToSlide(i);
+    slideTimer = setInterval(() => goToSlide(currentSlide + 1), SLIDE_DELAY);
+  });
+});
+
+/* ═══════════════════════════════════════════
+   SLIDESHOW DE FOTOS (Slide 2)
+═══════════════════════════════════════════ */
+const photoItems  = document.querySelectorAll('.photo-item');
+const thumbItems  = document.querySelectorAll('.thumb');
+const PHOTO_DELAY = 5000;
+let currentPhoto  = 0;
+
+function goToPhoto(idx) {
+  photoItems[currentPhoto].classList.remove('on');
+  thumbItems[currentPhoto].classList.remove('on');
+  currentPhoto = (idx + photoItems.length) % photoItems.length;
+  photoItems[currentPhoto].classList.add('on');
+  thumbItems[currentPhoto].classList.add('on');
+}
+
+setInterval(() => goToPhoto(currentPhoto + 1), PHOTO_DELAY);
+
+thumbItems.forEach((t, i) => {
+  t.addEventListener('click', () => goToPhoto(i));
+});
+
+/* ═══════════════════════════════════════════
+   GOOGLE SHEETS — carrega dados remotos
+   (ativa automaticamente quando SHEETS_ID
+   estiver preenchido)
+═══════════════════════════════════════════ */
+async function loadFromSheets() {
+  // Usa os IDs individuais de cada planilha
+  const gviz = id => `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json`;
+
+  try {
+    // ── Agenda ──
+    const agendaRes = await fetch(gviz(SHEET_AGENDA));
+    const agendaRaw = await agendaRes.text();
+    const agendaJson = JSON.parse(agendaRaw.substring(47).slice(0, -2));
+    const agendaRows = agendaJson.table.rows.slice(1); // pula cabeçalho
+    const colors = ['','b','g','r','p'];
+    const listEl = document.getElementById('agenda-list');
+    if (agendaRows.length) {
+      listEl.innerHTML = agendaRows.map((r, i) => {
+        const [titulo, sub, horario, dia, cor] = r.c.map(c => c ? (c.v || '') : '');
+        const stripe = cor || colors[i % colors.length];
+        return `<div class="a-card" style="animation-delay:${i*0.08}s">
+          <div class="a-stripe ${stripe}"></div>
+          <div class="a-body">
+            <div><div class="a-title">${titulo}</div><div class="a-sub">${sub}</div></div>
+            <div class="a-time"><div class="t">${horario}</div><div class="d">${dia}</div></div>
+          </div></div>`;
+      }).join('');
+    }
+
+    // ── Config (versículo, vídeo) ──
+    const cfgRes  = await fetch(gviz(SHEET_CONFIG));
+    const cfgRaw  = await cfgRes.text();
+    const cfgJson = JSON.parse(cfgRaw.substring(47).slice(0, -2));
+    const cfg = {};
+    cfgJson.table.rows.forEach(r => {
+      if (r.c[0] && r.c[1]) cfg[r.c[0].v] = r.c[1].v;
+    });
+    if (cfg.versiculo_texto) document.getElementById('verse-text').textContent = cfg.versiculo_texto;
+    if (cfg.versiculo_ref)   document.getElementById('verse-ref').textContent  = cfg.versiculo_ref;
+    if (cfg.video_titulo)    document.getElementById('video-title').textContent = cfg.video_titulo;
+    if (cfg.video_meta)      document.getElementById('video-meta').textContent  = cfg.video_meta;
+    if (cfg.video_url) {
+      document.getElementById('videoFrame').src = cfg.video_url;
+    }
+
+    // ── Avisos (ticker) ──
+    const avRes  = await fetch(gviz(SHEET_AVISOS));
+    const avRaw  = await avRes.text();
+    const avJson = JSON.parse(avRaw.substring(47).slice(0, -2));
+    const avisos = avJson.table.rows.slice(1).map(r => r.c[0] ? r.c[0].v : '').filter(Boolean);
+    if (avisos.length) {
+      const html = buildTicker(avisos);
+      [1,2,3].forEach(i => {
+        const el = document.getElementById(`ticker${i}`);
+        if (el) el.innerHTML = html;
+      });
+    }
+
+    // ── Fotos ──
+    const fotosRes  = await fetch(gviz(SHEET_FOTOS));
+    const fotosRaw  = await fotosRes.text();
+    const fotosJson = JSON.parse(fotosRaw.substring(47).slice(0, -2));
+    const fotos = fotosJson.table.rows.slice(1)
+      .map(r => ({ url: r.c[0]?.v || '', titulo: r.c[1]?.v || '', sub: r.c[2]?.v || '' }))
+      .filter(f => f.url);
+    if (fotos.length) {
+      const stage  = document.getElementById('photoStage');
+      const thumbs = document.getElementById('photoThumbs');
+      stage.innerHTML = fotos.map((f, i) => `
+        <div class="photo-item ${i===0?'on':''}">
+          <img src="${f.url}" alt="${f.titulo}">
+          <div class="photo-caption-overlay">
+            <div class="p-title">${f.titulo}</div>
+            <div class="p-sub">${f.sub}</div>
+          </div>
+        </div>`).join('');
+      thumbs.innerHTML = fotos.map((f, i) => `
+        <div class="thumb ${i===0?'on':''}"><img src="${f.url}" alt=""></div>`).join('');
+      // Re-bind slideshow
+      const newItems  = stage.querySelectorAll('.photo-item');
+      const newThumbs = thumbs.querySelectorAll('.thumb');
+      let cp = 0;
+      setInterval(() => {
+        newItems[cp].classList.remove('on'); newThumbs[cp].classList.remove('on');
+        cp = (cp + 1) % newItems.length;
+        newItems[cp].classList.add('on'); newThumbs[cp].classList.add('on');
+      }, PHOTO_DELAY);
+    }
+
+  } catch(e) {
+    console.warn('Sheets não carregado — usando dados padrão.', e);
+  }
+}
+
+loadFromSheets();
+// Recarrega dados a cada 5 minutos
+setInterval(loadFromSheets, 5 * 60 * 1000);
+</script>
+</body>
+</html>
