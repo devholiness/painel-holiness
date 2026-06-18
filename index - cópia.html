@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Painel Digital — Igreja Evangélica Holiness de Pompeia</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:        #C0392B;
+  --red-dark:   #922B21;
+  --red-light:  #E74C3C;
+  --bg:         #1A1C1E;
+  --bg2:        #222528;
+  --card:       #2A2D31;
+  --card2:      #313539;
+  --border:     rgba(192,57,43,0.25);
+  --border-s:   rgba(255,255,255,0.07);
+  --text:       #F0EDE8;
+  --muted:      #888380;
+  --white:      #FFFFFF;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html, body {
+  margin: 0; 
+  padding: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #1A1C1E;
+}
+
+body {
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#slides-wrap {
+  position: absolute;
+  width: 1080px !important;
+  height: 1920px !important;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
+  transform: rotate(90deg) translateY(-1920px);
+  -webkit-transform: rotate(90deg) translateY(-1920px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ══ BG ══ */
+.slide-bg{position:absolute;inset:0;pointer-events:none;z-index:0;}
+.slide-bg::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 0%,   rgba(192,57,43,0.08) 0%,transparent 65%),
+    radial-gradient(ellipse 400px 600px at 90% 60%,  rgba(192,57,43,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 350px 350px at 10% 85%,  rgba(192,57,43,0.06) 0%,transparent 60%);}
+#slides-wrap>*{position:relative;z-index:1;}
+.#slides-wrap>.slide-bg{z-index:0;}
+
+/* ══ HEADER ══ */
+
+/* ══ HEADER ══ */
+.site-header{
+  padding:36px 60px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;position:relative;
+}
+.site-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--red),rgba(192,57,43,0.1),transparent);}
+.logo-wrap img{height:48px;width:auto;}
+.header-info{text-align:right;}
+.header-city{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.header-motto{font-size:14px;font-weight:700;color:var(--red);margin-top:3px;letter-spacing:0.5px;}
+
+
+/* ══ CLOCK BAR ══ */
+.clock-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 60px;
+  background:rgba(0,0,0,0.25);
+  border-bottom:1px solid var(--border-s);
+  flex-shrink:0;
+}
+.clock-time{font-family:'Lora',serif;font-size:72px;font-weight:700;color:var(--red);letter-spacing:2px;line-height:1;font-variant-numeric:tabular-nums;}
+.clock-right{text-align:right;}
+.clock-day{font-size:17px;font-weight:800;color:var(--white);letter-spacing:3px;text-transform:uppercase;}
+.clock-date{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* ══ PARTE CENTRAL AMPLIADA ══ */
+.main-split {
+  display: flex;
+  padding: 0 60px;
+  flex: 1;
+  overflow: hidden;
+  margin-top: 25px;
+  margin-bottom: 85px; 
+  position: relative;
+}
+
+.conteudo-imagem {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60px;
+  right: 60px;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.conteudo-imagem.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.conteudo-imagem img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: fill !important; 
+  border-radius: 4px !important;
+}
+
+/* ══ TICKER ══ */
+.ticker-bar{position:absolute;bottom:0;left:0;right:0;height:54px;
+  background:linear-gradient(90deg,var(--red-dark),var(--red),var(--red-dark));
+  display:flex;align-items:center;overflow:hidden;z-index:50;flex-shrink:0;}
+.ticker-pill{flex-shrink:0;padding:0 18px;height:100%;background:rgba(0,0,0,0.22);
+  display:flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:3px;
+  color:rgba(255,255,255,0.75);text-transform:uppercase;}
+.ticker-track{flex:1;overflow:hidden;}
+.ticker-inner{display:inline-flex;white-space:nowrap;animation:scroll-ticker 32s linear infinite;}
+@keyframes scroll-ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-inner span{font-size:14px;font-weight:700;color:#fff;padding:0 44px;}
+.ticker-inner span::before{content:'✦';margin-right:12px;opacity:.5;}
+
+/* ══ DOTS ══ */
+#slide-dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:200;}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(192,57,43,0.3);transition:all .3s;}
+.dot.on{background:var(--red);transform:scale(1.5);}
+</style>
+</head>
+<body>
+
+<!-- Os pontinhos agora começam vazios, o script vai criar eles -->
+<div id="slide-dots"></div>
+
+<div id="slides-wrap">
+  <div class="slide-bg"></div>
+
+  <!-- FIXED HEADER -->
+
+
+  <header class="site-header">
+    <div class="logo-wrap">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDY5IiBoZWlnaHQ9IjYzIiB2aWV3Qm94PSIwIDAgNDY5IDYzIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTMxLjIyMDUgMC45NTQxMDJDNDIuNDM0NiAwLjk1NDEwMiA1Mi4xNDE0IDYuOTIyODkgNTcuMzg2NyAxNS43ODU2SDI0Ljg4OTlWMS40OTY3MkMyNy4wNjA0IDEuMTM0OTcgMjkuMDUgMC45NTQxMDIgMzEuMjIwNSAwLjk1NDEwMlpNNTkuNzM4IDIwLjYwODlDNjEuMDA0MSAyNC4wNDU1IDYxLjcyNzYgMjcuNjYyOSA2MS43Mjc2IDMxLjY0MjFDNjEuNzI3NiA0OC41ODM5IDQ3Ljk4MTMgNjIuMzMwMiAzMS4wMzk2IDYyLjMzMDJDMjguODY5MSA2Mi4zMzAyIDI2Ljg3OTUgNjIuMTQ5MyAyNC44ODk5IDYxLjc4NzVWMjAuNjA4OUg1OS43MzhaTTIwLjAwNjQgNjAuMzQwNkM4LjQ5MDgyIDU1LjgxODggMC4zNTE1NjIgNDQuNjY1IDAuMzUxNTYyIDMxLjY0MjFDMC4zNTE1NjIgMjcuNjYyOSAxLjA3NTA1IDI0LjA0NTUgMi4zNDExNiAyMC42MDg5SDIwLjAwNjRWNjAuMzQwNlpNNC44NzMzNyAxNS43ODU2QzguNDkwODIgOS45OTc3MyAxMy43MzYxIDUuNDc1OTEgMjAuMDY2NyAyLjk0MzdWMTUuNzg1Nkg0Ljg3MzM3WiIgZmlsbD0iI0NCM0Y0MCIvPgo8cGF0aCBkPSJNODQuMTk5MyAxMS4wMDM3Qzg2LjAwOCAxMS4wMDM3IDg3LjQ1NSA5LjU1Njc3IDg3LjQ1NSA3Ljc0ODA0Qzg3LjQ1NSA1LjkzOTMyIDg2LjAwOCA0LjU1MjYzIDg0LjE5OTMgNC41NTI2M0M4Mi41MTEyIDQuNTUyNjMgODEuMDAzOSA1LjkzOTMyIDgxLjAwMzkgNy43NDgwNEM4MS4wNjQyIDkuNTU2NzcgODIuNTExMiAxMS4wMDM3IDg0LjE5OTMgMTEuMDAzN1pNODEuODQ4IDQ2Ljg3NjhIODYuNjExVjE2LjE4ODhIODEuODQ4VjQ2Ljg3NjhaTTk2LjA3NjYgNTQuNzE0NkM5OS42OTQxIDU4LjI3MTggMTAzLjI1MSA1OS4yOTY3IDEwOC40OTcgNTkuMjk2N0MxMTUuOTczIDU5LjI5NjcgMTIzLjA4NyA1Ni4xMDEzIDEyMy4wODcgNDUuOTcyNFYxNi4xODg4SDExOC4zMjRWMjAuODMxMkMxMTUuODUyIDE3LjQ1NDkgMTEyLjE3NCAxNS40MDUgMTA4LjAxNCAxNS40MDVDOTkuOTM1MiAxNS40MDUgOTQuMzI4MiAyMS40OTQ0IDk0LjMyODIgMzEuMzgyQzk0LjMyODIgNDEuMjY5NyA5OS45OTU1IDQ3LjI5ODggMTA4LjAxNCA0Ny4yOTg4QzExMi4zNTUgNDcuMjk4OCAxMTYuMDkzIDQ0Ljk0NzUgMTE4LjMyNCA0MS44MTI0VjQ2LjIxMzZDMTE4LjMyNCA1Mi45NjYyIDExMy41NjEgNTUuNDM4MSAxMDguNDk3IDU1LjQzODFDMTA0LjA5NSA1NS40MzgxIDEwMS4wODEgNTQuMjkyNiA5OC41NDg1IDUxLjIxNzdMOTYuMDc2NiA1NC43MTQ2Wk0xMTguMzI0IDM4LjAxNEMxMTYuNjk2IDQwLjY2NjggMTEyLjk1OCA0My4wMTgyIDEwOS4xNiA0My4wMTgyQzEwMy4wMSA0My4wMTgyIDk5LjMzMjMgMzguMDc0MyA5OS4zMzIzIDMxLjMyMThDOTkuMzMyMyAyNC41MDg5IDEwMy4wMSAxOS42MjUzIDEwOS4xNiAxOS42MjUzQzExMi45NTggMTkuNjI1MyAxMTYuNjM2IDIxLjkxNjQgMTE4LjMyNCAyNC41NjkyVjM4LjAxNFpNMTMyLjYxMyA0Ni44NzY4SDEzNy4zNzZWMjUuMTcyMUMxMzguNzYzIDIyLjcwMDIgMTQyLjgwMiAyMC4yODg1IDE0NS42OTYgMjAuMjg4NUMxNDYuNDggMjAuMjg4NSAxNDcuMDIyIDIwLjM0ODggMTQ3LjYyNSAyMC40Njk0VjE1LjU4NTlDMTQzLjQwNSAxNS41ODU5IDEzOS44NDggMTcuOTM3MiAxMzcuMzc2IDIxLjE5MjlWMTYuMjQ5MUgxMzIuNjEzVjQ2Ljg3NjhaTTE1MS44NDYgMzEuNTAyNkMxNTEuODQ2IDQxLjA4ODkgMTU4LjQxNyA0Ny42NjA2IDE2Ny40NjEgNDcuNjYwNkMxNzIuNDY1IDQ3LjY2MDYgMTc2LjYyNSA0Ni4wMzI3IDE3OS42NCA0Mi45NTc5TDE3Ny4zNDkgMzkuODIyOEMxNzQuOTM3IDQyLjI5NDcgMTcxLjM4IDQzLjY4MTQgMTY3Ljg4MyA0My42ODE0QzE2MS4yNTEgNDMuNjgxNCAxNTcuMjEyIDM4Ljg1ODEgMTU2Ljg1IDMzLjA3MDJIMTgxLjY5VjMxLjg2NDRDMTgxLjY5IDIyLjYzOTkgMTc2LjIwMyAxNS40MDUgMTY2LjkxOCAxNS40MDVDMTU4LjE3NiAxNS40MDUgMTUxLjg0NiAyMi41Nzk2IDE1MS44NDYgMzEuNTAyNlpNMTY2Ljg1OCAxOS4zMjM5QzE3My44NTIgMTkuMzIzOSAxNzYuOTI3IDI0Ljk5MTIgMTc2Ljk4NyAyOS41NzMzSDE1Ni44NUMxNTcuMDkxIDI0Ljg3MDYgMTYwLjM0NyAxOS4zMjM5IDE2Ni44NTggMTkuMzIzOVpNMTkxLjc1OCAxMS4wMDM3QzE5My41NjcgMTEuMDAzNyAxOTUuMDE0IDkuNTU2NzcgMTk1LjAxNCA3Ljc0ODA0QzE5NS4wMTQgNS45MzkzMiAxOTMuNTY3IDQuNTUyNjMgMTkxLjc1OCA0LjU1MjYzQzE5MC4wNyA0LjU1MjYzIDE4OC41NjMgNS45MzkzMiAxODguNTYzIDcuNzQ4MDRDMTg4LjU2MyA5LjU1Njc3IDE5MC4wNyAxMS4wMDM3IDE5MS43NTggMTEuMDAzN1pNMTk0LjE3IDE2LjE4ODhIMTg5LjQwN1Y0OS44OTEzQzE4OS40MDcgNTMuNzQ5OSAxODcuNDE3IDU1LjI1NzIgMTg0LjY0NCA1NS4yNTcyQzE4My44NiA1NS4yNTcyIDE4My4wMTYgNTUuMTk2OSAxODIuMzUzIDU0Ljk1NThMMTgxLjY5IDU4LjkzNUMxODIuNzE1IDU5LjIzNjQgMTgzLjggNTkuMzU3IDE4NS4xMjYgNTkuMzU3QzE5MC45MTQgNTkuMzU3IDE5NC4xNyA1NS45MjA0IDE5NC4xNyA0OS44OTEzVjE2LjE4ODhaTTIyMi44NjggNDYuODc2OEgyMjcuNjMxVjI1Ljc3NUMyMjcuNjMxIDE4LjM1OTIgMjIyLjIwNSAxNS40MDUgMjE1Ljc1NCAxNS40MDVDMjEwLjc1IDE1LjQwNSAyMDYuNzcxIDE3LjAzMjggMjAzLjUxNSAyMC40Njk0TDIwNS43NDYgMjMuNzg1NEMyMDguNDU5IDIwLjg5MTQgMjExLjQ3MyAxOS41MDQ4IDIxNS4xNTEgMTkuNTA0OEMyMTkuNjEzIDE5LjUwNDggMjIyLjkyOSAyMS44NTYxIDIyMi45MjkgMjYuMDE2MlYzMS41NjI5QzIyMC40NTcgMjguNzI5MyAyMTYuOTYgMjcuMzQyNiAyMTIuNzM5IDI3LjM0MjZDMjA3LjU1NCAyNy4zNDI2IDIwMi4wMDggMzAuNTk4MyAyMDIuMDA4IDM3LjQ3MTRDMjAyLjAwOCA0NC4xNjM3IDIwNy41NTQgNDcuNjYwNiAyMTIuNzM5IDQ3LjY2MDZDMjE2Ljg5OSA0Ny42NjA2IDIyMC4zMzYgNDYuMjEzNiAyMjIuOTI5IDQzLjM3OTlWNDYuODc2OEgyMjIuODY4Wk0yMjIuODY4IDQwLjM2NTRDMjIwLjk5OSA0Mi44OTc2IDIxNy44MDQgNDQuMTYzNyAyMTQuNDI4IDQ0LjE2MzdDMjA5Ljk2NiA0NC4xNjM3IDIwNi44OTEgNDEuMzkwMyAyMDYuODkxIDM3LjQ3MTRDMjA2Ljg5MSAzMy41NTI1IDIxMC4wMjYgMzAuNzE4OCAyMTQuNDI4IDMwLjcxODhDMjE3LjgwNCAzMC43MTg4IDIyMS4wNiAzMS45ODUgMjIyLjg2OCAzNC41MTcyVjQwLjM2NTRaTTI1Ny4yMzQgNDYuODc2OEgyNjUuMzEzVjI1LjA1MTVDMjY1LjMxMyAxOS4wODI3IDI2Mi4wNTcgMTUuNDA1IDI1NS4zNjUgMTUuNDA1QzI1MC4zNjEgMTUuNDA1IDI0Ni41MDIgMTcuODE2NiAyNDQuNTczIDIwLjE2OFY0LjQ5MjM0SDIzNi40OTRWNDYuODc2OEgyNDQuNTczVjI2LjE5N0MyNDUuOTYgMjQuMzI4IDI0OC40MzIgMjIuNTc5NiAyNTEuNTY3IDIyLjU3OTZDMjU1LjA2NCAyMi41Nzk2IDI1Ny4yOTQgMjMuOTA2IDI1Ny4yOTQgMjguMTg2NlY0Ni44NzY4SDI1Ny4yMzRaTTI4Ny41NiA0Ny42MDAzQzI5Ny43NDkgNDcuNjAwMyAzMDMuODM5IDQwLjI0NDggMzAzLjgzOSAzMS40NDIzQzMwMy44MzkgMjIuNzYwNSAyOTcuNzQ5IDE1LjM0NDcgMjg3LjU2IDE1LjM0NDdDMjc3LjQzMSAxNS4zNDQ3IDI3MS4zNDIgMjIuNzAwMiAyNzEuMzQyIDMxLjQ0MjNDMjcxLjM0MiA0MC4yNDQ4IDI3Ny40MzEgNDcuNjAwMyAyODcuNTYgNDcuNjAwM1pNMjg3LjU2IDQwLjQyNTdDMjgyLjU1NiA0MC40MjU3IDI3OS43MjIgMzYuMjY1NiAyNzkuNzIyIDMxLjQ0MjNDMjc5LjcyMiAyNi42Nzk0IDI4Mi40OTYgMjIuNTE5MyAyODcuNTYgMjIuNTE5M0MyOTIuNTY0IDIyLjUxOTMgMjk1LjQ1OCAyNi42Nzk0IDI5NS40NTggMzEuNDQyM0MyOTUuMzk4IDM2LjMyNTkgMjkyLjU2NCA0MC40MjU3IDI4Ny41NiA0MC40MjU3Wk0zMDkuODA4IDQ2Ljg3NjhIMzE3Ljg4N1Y0LjQ5MjM0SDMwOS44MDhWNDYuODc2OFpNMzI5Ljg4NCAxMS42NjY5QzMzMi41MzcgMTEuNjY2OSAzMzQuNzA4IDkuNDk2NDggMzM0LjcwOCA2Ljg0MzY4QzMzNC43MDggNC4xOTA4OSAzMzIuNTM3IDIuMDIwNDIgMzI5Ljg4NCAyLjAyMDQyQzMyNy4yOTIgMi4wMjA0MiAzMjUuMDYxIDQuMTkwODkgMzI1LjA2MSA2Ljg0MzY4QzMyNS4wNjEgOS40OTY0OCAzMjcuMjkyIDExLjY2NjkgMzI5Ljg4NCAxMS42NjY5Wk0zMjUuODQ1IDQ2Ljg3NjhIMzMzLjkyNFYxNi4xODg4SDMyNS44NDVWNDYuODc2OFpNMzYyLjY4MyA0Ni44NzY4SDM3MC43NjJWMjUuMTcyMUMzNzAuNzYyIDE5LjIwMzMgMzY3LjUwNiAxNS40MDUgMzYwLjgxNCAxNS40MDVDMzU1LjgxIDE1LjQwNSAzNTIuMDcxIDE3LjgxNjYgMzUwLjA4MiAyMC4xNjhWMTYuMTg4OEgzNDIuMDAzVjQ2Ljg3NjhIMzUwLjA4MlYyNi4xOTdDMzUxLjQwOCAyNC4zMjggMzUzLjg4IDIyLjU3OTYgMzU3LjA3NiAyMi41Nzk2QzM2MC41MTIgMjIuNTc5NiAzNjIuNzQzIDI0LjAyNjYgMzYyLjc0MyAyOC4zMDcyVjQ2Ljg3NjhIMzYyLjY4M1pNMzc2Ljc5MSAzMS41MDI2QzM3Ni43OTEgNDEuMzMgMzgzLjg0NSA0Ny42NjA2IDM5My4xOSA0Ny42NjA2QzM5Ny45NTMgNDcuNjYwNiA0MDIuNzc2IDQ2LjIxMzYgNDA1Ljg1MSA0My4zNzk5TDQwMi4yOTQgMzguMTk0OUM0MDAuMzA0IDQwLjEyNDIgMzk2LjkyOCA0MS4yNjk3IDM5NC4wOTQgNDEuMjY5N0MzODguOTA5IDQxLjI2OTcgMzg1Ljc3NCAzOC4wMTQgMzg1LjIzMSAzNC4xNTU0SDQwOC4wMjFWMzIuMzQ2N0M0MDguMDIxIDIyLjI3ODEgNDAxLjgxMSAxNS40NjUzIDM5Mi42NDcgMTUuNDY1M0MzODMuMzAyIDE1LjQwNSAzNzYuNzkxIDIyLjU3OTYgMzc2Ljc5MSAzMS41MDI2Wk0zOTIuNjQ3IDIxLjc5NThDMzk4LjAxMyAyMS43OTU4IDQwMC4wMDMgMjUuNjU0NCA0MDAuMTg0IDI4LjYwODdIMzg1LjA1MUMzODUuNDczIDI1LjU5NDEgMzg3LjY0MyAyMS43OTU4IDM5Mi42NDcgMjEuNzk1OFpNNDExLjIxNyA0Mi44MzczQzQxNC40NzMgNDUuODUxOCA0MTkuNTk3IDQ3LjYwMDMgNDI0Ljk2MyA0Ny42MDAzQzQzMy40NjQgNDcuNjAwMyA0MzguMjI3IDQzLjMxOTYgNDM4LjIyNyAzNy43NzI5QzQzOC4yMjcgMzAuMTc2MiA0MzEuMTczIDI4LjcyOTMgNDI1LjkyOCAyNy43MDQzQzQyMi40OTEgMjYuOTgwOCA0MjAuMDggMjYuMzE3NiA0MjAuMDggMjQuMzg4M0M0MjAuMDggMjIuNTc5NiA0MjIuMDA5IDIxLjU1NDYgNDI0LjkwMyAyMS41NTQ2QzQyOC42NDEgMjEuNTU0NiA0MzIuMTM4IDIzLjEyMjIgNDM0LjAwNyAyNS4xMTE4TDQzNy4yNjIgMTkuNTY1QzQzNC4xODggMTcuMTUzNCA0MzAuMDg4IDE1LjM0NDcgNDI0Ljg0MyAxNS4zNDQ3QzQxNi43NjQgMTUuMzQ0NyA0MTIuMjQyIDE5Ljg2NjUgNDEyLjI0MiAyNC45OTEyQzQxMi4yNDIgMzIuMjg2NCA0MTkuMDU1IDMzLjU1MjUgNDI0LjMgMzQuNTc3NUM0MjcuNzk3IDM1LjMwMSA0MzAuNDUgMzYuMDI0NCA0MzAuNDUgMzguMTk0OUM0MzAuNDUgNDAuMTI0MiA0MjguODIyIDQxLjMzIDQyNS4zMjUgNDEuMzNDNDIxLjUyNyA0MS4zMyA0MTYuOTQ0IDM5LjIxOTkgNDE0LjcxNCAzNy4xMDk3TDQxMS4yMTcgNDIuODM3M1pNNDQxLjQ4MyA0Mi44MzczQzQ0NC43MzkgNDUuODUxOCA0NDkuODYzIDQ3LjYwMDMgNDU1LjIyOSA0Ny42MDAzQzQ2My43MyA0Ny42MDAzIDQ2OC40OTMgNDMuMzE5NiA0NjguNDkzIDM3Ljc3MjlDNDY4LjQ5MyAzMC4xNzYyIDQ2MS40MzkgMjguNzI5MyA0NTYuMTMzIDI3LjcwNDNDNDUyLjY5NyAyNi45ODA4IDQ1MC4yODUgMjYuMzE3NiA0NTAuMjg1IDI0LjM4ODNDNDUwLjI4NSAyMi41Nzk2IDQ1Mi4yMTUgMjEuNTU0NiA0NTUuMTA5IDIxLjU1NDZDNDU4Ljg0NyAyMS41NTQ2IDQ2Mi4zNDMgMjMuMTIyMiA0NjQuMjEyIDI1LjExMThMNDY3LjQ2OCAxOS41NjVDNDY0LjM5MyAxNy4xNTM0IDQ2MC4yOTQgMTUuMzQ0NyA0NTUuMDQ4IDE1LjM0NDdDNDQ2Ljk2OSAxNS4zNDQ3IDQ0Mi40NDcgMTkuODY2NSA0NDIuNDQ3IDI0Ljk5MTJDNDQyLjQ0NyAzMi4yODY0IDQ0OS4yNiAzMy41NTI1IDQ1NC41MDYgMzQuNTc3NUM0NTguMDAyIDM1LjMwMSA0NjAuNjU1IDM2LjAyNDQgNDYwLjY1NSAzOC4xOTQ5QzQ2MC42NTUgNDAuMTI0MiA0NTkuMDI3IDQxLjMzIDQ1NS41MzEgNDEuMzNDNDUxLjczMiA0MS4zMyA0NDcuMTUgMzkuMjE5OSA0NDQuOTE5IDM3LjEwOTdMNDQxLjQ4MyA0Mi44MzczWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==" alt="Igreja Holiness">
+    </div>
+    <div class="header-info">
+      <div class="header-city">Pompeia — SP</div>
+      <div class="header-motto">Vivendo em unidade, servindo com amor</div>
+    </div>
+  </header>
+  
+  <!-- FIXED CLOCK BAR -->
+  <div class="clock-bar">
+    <div class="clock-time" id="clock1">00:00</div>
+    <div class="clock-right">
+      <div class="clock-day" id="day1">—</div>
+      <div class="clock-date" id="date1">—</div>
+    </div>
+  </div>
+
+  <!-- PARTE CENTRAL MAXIMIZADA E VAZIA (ESPERANDO O DRIVE) -->
+  <div class="main-split" id="centro-dinamico">
+    <!-- O Javascript vai injetar as imagens aqui automaticamente! -->
+  </div>
+
+  <!-- FIXED TICKER -->
+  <div class="ticker-bar">
+    <div class="ticker-pill">Avisos</div>
+    <div class="ticker-track">
+      <div class="ticker-inner">
+        <span>Seja bem-vindo à nossa comunidade!</span>
+        <span>Culto de Celebração aos Sábados às 19h.</span>
+        <span>Escola Bíblica aos Domingos às 9h.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 1. MOTOR DO RELÓGIO FIXO
+function atualizarRelogio() {
+  const agora = new Date();
+  const horas = String(agora.getHours()).padStart(2, "0");
+  const minutos = String(agora.getMinutes()).padStart(2, "0");
+  
+  const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+  document.getElementById("clock1").textContent = `${horas}:${minutos}`;
+  document.getElementById("day1").textContent = diasSemana[agora.getDay()];
+  document.getElementById("date1").textContent = `${agora.getDate()} de ${meses[agora.getMonth()]} de ${agora.getFullYear()}`;
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
+// 2. MOTOR MÁGICO DO GOOGLE DRIVE (LINK INTEGRADO)
+const urlDoScript = "https://script.google.com/macros/s/AKfycbx0vgw5w6lvEEwbjNhKD9h_rXhIcNGmUwJMC1ia1EjnG3QYXvRW3hLC3w5Gtfv_uukn/exec";
+
+async function carregarImagensDoDrive() {
+  try {
+    const resposta = await fetch(urlDoScript);
+    const ids = await resposta.json();
+    
+    const containerImagens = document.getElementById('centro-dinamico');
+    const containerDots = document.getElementById('slide-dots');
+    
+    // Se a pasta estiver vazia, encerra aqui
+    if(ids.length === 0) return; 
+
+    // Cria as imagens e os pontinhos dinamicamente usando a API de renderização direta do Google
+    ids.forEach((id, index) => {
+      // Cria a div da imagem
+      const div = document.createElement('div');
+      div.className = index === 0 ? 'conteudo-imagem active' : 'conteudo-imagem';
+      const img = document.createElement('img');
+      img.src = `https://lh3.googleusercontent.com/d/${id}`;
+      div.appendChild(img);
+      containerImagens.appendChild(div);
+
+      // Cria o pontinho correspondente
+      const dot = document.createElement('div');
+      dot.className = index === 0 ? 'dot on' : 'dot';
+      containerDots.appendChild(dot);
+    });
+
+    // Se tiver mais de 1 imagem, liga o motor do carrossel
+    if(ids.length > 1) {
+      iniciarCarrossel();
+    }
+
+  } catch (erro) {
+    console.error("Erro ao puxar imagens da pasta:", erro);
+  }
+}
+
+// 3. MOTOR DE TROCA DE IMAGENS
+let slideAtual = 0;
+function iniciarCarrossel() {
+  setInterval(() => {
+    const imagens = document.querySelectorAll(".conteudo-imagem");
+    const dots = document.querySelectorAll(".dot");
+    
+    if(imagens.length === 0) return;
+
+    imagens[slideAtual].classList.remove("active");
+    if(dots[slideAtual]) dots[slideAtual].classList.remove("on");
+
+    slideAtual = (slideAtual + 1) % imagens.length;
+
+    imagens[slideAtual].classList.add("active");
+    if(dots[slideAtual]) dots[slideAtual].classList.add("on");
+    
+  }, 10000); // 10 segundos por imagem
+}
+
+// Dá a partida na busca assim que a TV liga
+carregarImagensDoDrive();
+</script>
+
+</body>
+</html>
