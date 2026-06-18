@@ -73,11 +73,11 @@ body {
 }
 .site-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
   background:linear-gradient(90deg,var(--red),rgba(192,57,43,0.1),transparent);}
-.logo-wrap img {
-  height: 48px !important;
-  width: 250px !important; /* Força a largura correta para o formato retangular da logo */
-  object-fit: contain !important; /* Garante que a imagem não mude de proporção ou distorça */
-  display: block;
+.logo-wrap {
+  background-color: #1A1C1E !important; /* Força um fundo escuro idêntico ao Master atrás do logo */
+  padding: 8px 16px;                    /* Dá um espaço para o logo respirar dentro do fundo escuro */
+  border-radius: 4px;                   /* Deixa os cantos levemente arredondados, combinando com o layout */
+  display: inline-block;                /* Garante que o fundo contorne apenas o logo */
 }
 .header-info{text-align:right;}
 .header-city{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
